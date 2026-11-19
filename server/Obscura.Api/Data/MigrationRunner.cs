@@ -5,6 +5,8 @@ namespace Obscura.Api.Data;
 
 public static class MigrationRunner
 {
+    private const long MigrationLockKey = 727_274;
+
     public static async Task ApplyAsync(NpgsqlDataSource dataSource, string migrationsDir, ILogger logger)
     {
         if (!Directory.Exists(migrationsDir))
@@ -12,36 +14,44 @@ public static class MigrationRunner
 
         await using var conn = await dataSource.OpenConnectionAsync();
 
-        await conn.ExecuteAsync("""
-            CREATE TABLE IF NOT EXISTS schema_migrations (
-                version     text        PRIMARY KEY,
-                applied_at  timestamptz NOT NULL DEFAULT now()
-            )
-        """);
-
-        var applied = (await conn.QueryAsync<string>("SELECT version FROM schema_migrations"))
-            .ToHashSet();
-
-        var files = Directory.GetFiles(migrationsDir, "*.sql")
-            .OrderBy(Path.GetFileName, StringComparer.Ordinal);
-
-        foreach (var file in files)
+        await conn.ExecuteAsync("SELECT pg_advisory_lock(@key)", new {key = MigrationLockKey });
+        try
         {
-            var version = Path.GetFileNameWithoutExtension(file);
-            if (applied.Contains(version))
-                continue;
+            await conn.ExecuteAsync("""
+                CREATE TABLE IF NOT EXISTS schema_migrations (
+                    version     text        PRIMARY KEY,
+                    applied_at  timestamptz NOT NULL DEFAULT now()
+                )
+            """);
 
-            var sql = await File.ReadAllTextAsync(file);
+            var applied = (await conn.QueryAsync<string>("SELECT version FROM schema_migrations"))
+                .ToHashSet();
 
-            await using var tx = await conn.BeginTransactionAsync();
-            await conn.ExecuteAsync(sql, transaction: tx);
-            await conn.ExecuteAsync(
-                "INSERT INTO schema_migrations (version) VALUES (@version)",
-                new {version},
-                transaction: tx);
-            await tx.CommitAsync();
+            var files = Directory.GetFiles(migrationsDir, "*.sql")
+                .OrderBy(Path.GetFileName, StringComparer.Ordinal);
 
-            logger.LogInformation("Applied migration {Version}", version);
+            foreach (var file in files)
+            {
+                var version = Path.GetFileNameWithoutExtension(file);
+                if (applied.Contains(version))
+                    continue;
+
+                var sql = await File.ReadAllTextAsync(file);
+
+                await using var tx = await conn.BeginTransactionAsync();
+                await conn.ExecuteAsync(sql, transaction: tx);
+                await conn.ExecuteAsync(
+                    "INSERT INTO schema_migrations (version) VALUES (@version)",
+                    new {version},
+                    transaction: tx);
+                await tx.CommitAsync();
+
+                logger.LogInformation("Applied migration {Version}", version);
+            }
+        }
+        finally
+        {
+            await conn.ExecuteAsync("SELECT pg_advisory_unlock(@key)", new { key = MigrationLockKey });
         }
     }
 }

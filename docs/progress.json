@@ -4,46 +4,413 @@
   "phase": "C# trial week",
   "focus": "E1",
   "milestones": [
-    { "text": "Project proposal (MANIFESTO, README)", "date": "2026-11-17" },
-    { "text": "Setup: Docker PostgreSQL, solution, Vite client, /api/health/db end to end", "date": "2026-11-18" }
+    {
+      "text": "Project proposal (MANIFESTO, README)",
+      "date": "2026-11-17"
+    },
+    {
+      "text": "Setup: Docker PostgreSQL, solution, Vite client, /api/health/db end to end",
+      "date": "2026-11-18"
+    },
+    {
+      "text": "Migration runner with advisory lock; 0001_create_users applied, constraints verified by hand",
+      "date": "2026-11-19"
+    },
+    {
+      "text": "PasswordHasher (Argon2id, PHC, NFKC, rehash check) and PasswordPolicy (15–128 code points), 25 unit tests green",
+      "date": "2026-11-19"
+    }
   ],
   "features": [
-    { "id": "E1", "tier": 1, "name": "Registration and login", "steps": { "concept": "done", "note": "done", "code": "doing", "test": "todo" } },
-    { "id": "E2", "tier": 1, "name": "Secure sessions", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "E3", "tier": 1, "name": "Accounts and balances", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "E4", "tier": 1, "name": "Transfers with a double-entry ledger", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "E5", "tier": 1, "name": "Transaction history", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "E6", "tier": 1, "name": "Input validation and safe queries", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "E7", "tier": 1, "name": "Security headers", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "E8", "tier": 1, "name": "Roles and protected routes", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "B1", "tier": 2, "name": "Two-factor authentication", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "B2", "tier": 2, "name": "Rate limiting and lockout", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "B3", "tier": 2, "name": "CSRF protection", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "B4", "tier": 2, "name": "Step-up confirmation and idempotency", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "B5", "tier": 2, "name": "Audit log and active sessions", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "B6", "tier": 2, "name": "Subaddresses", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "B7", "tier": 2, "name": "Payment requests with confirmations", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "B8", "tier": 2, "name": "Dashboard", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "X1", "tier": 3, "name": "Monero stagenet integration", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "X2", "tier": 3, "name": "Passkeys", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "X3", "tier": 3, "name": "Live updates", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "X4", "tier": 3, "name": "Encryption at rest", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "X5", "tier": 3, "name": "Suspicious activity alerts", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "X6", "tier": 3, "name": "Privacy explainer", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } },
-    { "id": "X7", "tier": 3, "name": "Automated security testing", "steps": { "concept": "todo", "note": "todo", "code": "todo", "test": "todo" } }
+    {
+      "id": "E1",
+      "tier": 1,
+      "name": "Registration and login",
+      "steps": {
+        "concept": "done",
+        "note": "done",
+        "code": "doing",
+        "test": "doing"
+      },
+      "by": {
+        "test": "claude"
+      }
+    },
+    {
+      "id": "E2",
+      "tier": 1,
+      "name": "Secure sessions",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "E3",
+      "tier": 1,
+      "name": "Accounts and balances",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "E4",
+      "tier": 1,
+      "name": "Transfers with a double-entry ledger",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "E5",
+      "tier": 1,
+      "name": "Transaction history",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "E6",
+      "tier": 1,
+      "name": "Input validation and safe queries",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "E7",
+      "tier": 1,
+      "name": "Security headers",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "E8",
+      "tier": 1,
+      "name": "Roles and protected routes",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "B1",
+      "tier": 2,
+      "name": "Two-factor authentication",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "B2",
+      "tier": 2,
+      "name": "Rate limiting and lockout",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "B3",
+      "tier": 2,
+      "name": "CSRF protection",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "B4",
+      "tier": 2,
+      "name": "Step-up confirmation and idempotency",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "B5",
+      "tier": 2,
+      "name": "Audit log and active sessions",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "B6",
+      "tier": 2,
+      "name": "Subaddresses",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "B7",
+      "tier": 2,
+      "name": "Payment requests with confirmations",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "B8",
+      "tier": 2,
+      "name": "Dashboard",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "X1",
+      "tier": 3,
+      "name": "Monero stagenet integration",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "X2",
+      "tier": 3,
+      "name": "Passkeys",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "X3",
+      "tier": 3,
+      "name": "Live updates",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "X4",
+      "tier": 3,
+      "name": "Encryption at rest",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "X5",
+      "tier": 3,
+      "name": "Suspicious activity alerts",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "X6",
+      "tier": 3,
+      "name": "Privacy explainer",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    },
+    {
+      "id": "X7",
+      "tier": 3,
+      "name": "Automated security testing",
+      "steps": {
+        "concept": "todo",
+        "note": "todo",
+        "code": "todo",
+        "test": "todo"
+      }
+    }
   ],
   "decisions": [
-    { "text": "Amounts are integer piconero (long / bigint), never floating point", "date": "2026-11-17", "by": "claude" },
-    { "text": "Same origin everywhere: /api prefix, Vite proxy in dev, API serves the client in production, no CORS", "date": "2026-11-18", "by": "claude" },
-    { "text": "ESLint as the client linter", "date": "2026-11-18", "by": "claude" },
-    { "text": "users table: identity id, normalized unique email, PHC password hash, role, is_frozen", "feature": "E1", "date": "2026-11-18", "by": "claude" },
-    { "text": "Argon2id m=19456 KiB, t=2, p=1 in PHC format, rehash on login when outdated", "feature": "E1", "date": "2026-11-18", "by": "claude" },
-    { "text": "Hand-written C# migration runner, one transaction per file, schema_migrations table", "date": "2026-11-18", "by": "claude" }
+    {
+      "text": "Amounts are integer piconero (long / bigint), never floating point",
+      "date": "2026-11-17",
+      "by": "claude"
+    },
+    {
+      "text": "Same origin everywhere: /api prefix, Vite proxy in dev, API serves the client in production, no CORS",
+      "date": "2026-11-18",
+      "by": "claude"
+    },
+    {
+      "text": "ESLint as the client linter",
+      "date": "2026-11-18",
+      "by": "claude"
+    },
+    {
+      "text": "users table: identity id, normalized unique email, PHC password hash, role, is_frozen",
+      "feature": "E1",
+      "date": "2026-11-18",
+      "by": "claude"
+    },
+    {
+      "text": "Argon2id m=19456 KiB, t=2, p=1 in PHC format, rehash on login when outdated",
+      "feature": "E1",
+      "date": "2026-11-18",
+      "by": "claude"
+    },
+    {
+      "text": "Hand-written C# migration runner, one transaction per file, schema_migrations table",
+      "date": "2026-11-18",
+      "by": "claude"
+    },
+    {
+      "text": "Migration runner serialized with a session-level advisory lock, released explicitly in finally (pooling: close does not unlock)",
+      "date": "2026-11-19",
+      "by": "claude"
+    },
+    {
+      "text": "Login hides whether an email exists (same error, dummy hash); registration enumeration is an accepted risk, mitigated by B2",
+      "date": "2026-11-19",
+      "by": "claude",
+      "feature": "E1"
+    },
+    {
+      "text": "Tests run the migration runner once per test run, via a shared xUnit fixture on a freshly reset obscura_test",
+      "date": "2026-11-19",
+      "by": "claude"
+    },
+    {
+      "text": "Passwords normalized to NFKC before hashing (no trim, no case folding); max 128 characters, checked before hashing",
+      "date": "2026-11-19",
+      "by": "claude",
+      "feature": "E1"
+    },
+    {
+      "text": "Passwords 15–128 Unicode code points after NFKC; no composition rules, spaces allowed",
+      "date": "2026-11-19",
+      "by": "claude",
+      "feature": "E1"
+    },
+    {
+      "text": "DB tests share one collection fixture (IAsyncLifetime): obscura_test reset and migrated once per run",
+      "date": "2026-11-19",
+      "by": "claude"
+    },
+    {
+      "text": "Password blocklist moves to B2",
+      "date": "2026-11-19",
+      "by": "claude",
+      "feature": "E1"
+    },
+    {
+      "text": "DB tests truncate data tables (RESTART IDENTITY CASCADE) at the start of each test; real commits are needed for E4 concurrency tests",
+      "date": "2026-11-19",
+      "by": "claude"
+    },
+    {
+      "text": "Hand-written per-request validators, errors as ProblemDetails; register 201/400/409, login collapses every failure into one generic 401",
+      "date": "2026-11-19",
+      "by": "claude",
+      "feature": "E1"
+    },
+    {
+      "text": "Email: structural check, max 254 (validation + CHECK in 0002); React register/login pages move to E2",
+      "date": "2026-11-19",
+      "by": "claude",
+      "feature": "E1"
+    }
   ],
   "open": [
-    { "text": "Instructor approval of the C# API stack", "date": "2026-11-17", "by": "claude" },
-    { "text": "Trial week verdict: keep C# or fall back to Express", "date": "2026-11-18", "by": "claude" },
-    { "text": "How a transfer recipient is identified (email vs. username), with user enumeration in mind", "feature": "E4", "date": "2026-11-18", "by": "claude" },
-    { "text": "Trust the HTTPS dev certificate (Secure cookie, HSTS)", "feature": "E2", "date": "2026-11-18", "by": "claude" }
+    {
+      "text": "Instructor approval of the C# API stack",
+      "date": "2026-11-17",
+      "by": "claude"
+    },
+    {
+      "text": "Trial week verdict: keep C# or fall back to Express",
+      "date": "2026-11-18",
+      "by": "claude"
+    },
+    {
+      "text": "How a transfer recipient is identified (email vs. username), with user enumeration in mind",
+      "feature": "E4",
+      "date": "2026-11-18",
+      "by": "claude"
+    },
+    {
+      "text": "Trust the HTTPS dev certificate (Secure cookie, HSTS)",
+      "feature": "E2",
+      "date": "2026-11-18",
+      "by": "claude"
+    },
+    {
+      "text": "Test isolation between DB tests: transaction per test vs. truncate (decide with the first DB test)",
+      "date": "2026-11-19",
+      "by": "claude",
+      "closed": "2026-11-19"
+    },
+    {
+      "text": "Minimum password length (NIST SP 800-63B: 8 with MFA, 15 for password-only); currently only the 128 maximum is decided",
+      "date": "2026-11-19",
+      "by": "claude",
+      "feature": "E1",
+      "closed": "2026-11-19"
+    },
+    {
+      "text": "Blocklist of common/breached passwords at registration (NIST): end of E1 or B2? Leaning B2",
+      "date": "2026-11-19",
+      "by": "claude",
+      "feature": "E1",
+      "closed": "2026-11-19"
+    }
   ]
 }
