@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Obscura.Api.Tests/Obscura.Api.Tests.csproj" />
+  <Project Path="Obscura.Api/Obscura.Api.csproj" />
+</Solution>
