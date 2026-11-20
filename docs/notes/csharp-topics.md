@@ -21,6 +21,8 @@ One line per topic, for revision. Where each one first came up is in brackets.
 - **LINQ:** `Where`/`Select`/`OrderBy`/`ToHashSet` on any `IEnumerable<T>`; lazy until enumerated, like Java streams. [MigrationRunner]
 - **`StringComparer.Ordinal`:** compares raw character codes; the default comparison depends on the system's culture (locale). [MigrationRunner]
 - **`async`/`await` and `Task`:** `await` frees the thread while waiting; avoid `async void` and `.Result`/`.Wait()`. [Program.cs, MigrationRunner]
+- **Inheritance and `protected override`:** `class A : B` inherits; `override` replaces a `virtual` method of the base class (C# requires both keywords explicitly, unlike Java's implicit overriding). [ObscuraApiFactory]
+- **`using` block vs `using` declaration:** `using (var x = …) { … }` disposes at the closing brace; `using var x = …;` at the end of the enclosing scope. [DatabaseFixture]
 - **`IDisposable`/`IAsyncDisposable` and `await using`:** dispose at the end of scope, like Java's try-with-resources; disposing a connection returns it to the pool, disposing an uncommitted transaction rolls it back. [Program.cs, MigrationRunner]
 - **`try`/`finally`:** cleanup that must run even when an exception occurs (advisory unlock). [MigrationRunner]
 - **`const`:** a compile-time constant, like Java's `static final` for primitives. [MigrationRunner]
@@ -46,6 +48,16 @@ One line per topic, for revision. Where each one first came up is in brackets.
 - **`T?` for value types vs reference types:** `long?` is `Nullable<long>`, a real type with `.HasValue`/`.Value` (Java: boxed `Long`); `string?` is only a compiler annotation for nullable reference types. [UserRepository]
 - **Exception filters:** `catch (PostgresException e) when (…)` catches only matching exceptions; others propagate untouched, and the stack isn't unwound for them. [UserRepository]
 - **Dapper constructor mapping:** a positional record is filled through its constructor; column names must match parameter names (case-insensitive), hence `password_hash AS PasswordHash`. [UserRepository]
+- **`ToLowerInvariant` vs `ToLower`:** `ToLower` uses the current culture (Turkish: `I` → `ı`); identifiers, emails and keys use the invariant culture. [EmailAddress]
+- **Null-forgiving operator `!`:** `request.Email!` tells the compiler "not null here" when it can't prove it; it changes nothing at runtime. [AuthEndpoints]
+- **Collection expressions:** `["message"]` creates an array (or list) whose type comes from the target (C# 12). [Register]
+- **Writing an extension method:** a `static` method in a `static` class whose first parameter has `this`; called as if it were an instance method, resolved at compile time. [AuthEndpoints]
+- **Value tuples and deconstruction:** `(string Email, string Hash)` as a return type; `var (email, _) = …` unpacks it, and `_` is a discard. Dapper maps tuples by column position. [RegisterTests]
+- **`Task.WhenAll`:** starts nothing itself; it awaits tasks that are already running, so they run concurrently. `await` in a loop would run them one after another. [RegisterTests]
+- **Numeric literal suffixes:** `1L` is a `long`, `1.5m` a `decimal`, `1.5f` a `float`. [RegisterTests]
+- **Delegates `Func<…>` / `Action<…>`:** typed function values; `Func<Task>` is "a function that returns a Task", `Action` returns nothing. A lambda or method group converts to them. [LoginTests]
+- **`Stopwatch`:** high-resolution elapsed-time measurement (`Stopwatch.StartNew()`, `.Elapsed`). [LoginTests]
+- **`?.` and `??` together:** `user?.PasswordHash ?? fallback` reads a property only if `user` isn't null, and falls back otherwise. [AuthEndpoints]
 - **CPU-bound vs I/O-bound:** `async` helps while *waiting* (DB, network), not while *computing*, so Argon2id is called synchronously. [PasswordHasher]
 
 ## ASP.NET Core
@@ -63,6 +75,9 @@ One line per topic, for revision. Where each one first came up is in brackets.
 - **Captive dependency:** a singleton holding a scoped service keeps it alive forever and shares it across requests; ASP.NET Core rejects this in Development (`ValidateScopes`). [Program.cs]
 - **`AddSingleton(instance)` vs `AddSingleton<T>()`:** the first registers an object you built; the second lets the container build `T` and inject its constructor parameters (constructor injection). [Program.cs]
 - **`ValidateOnBuild`:** in Development, `Build()` checks that every registered service can be constructed, so a missing dependency fails at startup. [Program.cs]
+- **Route groups:** `app.MapGroup("/api/auth")` gives a shared prefix (and later shared filters/policies) to several endpoints. [AuthEndpoints]
+- **`IResult` and `Results.*`:** handlers return `Results.ValidationProblem(errors)` (400, ProblemDetails with field errors), `Results.Problem(...)` (any status as ProblemDetails, RFC 9457), `Results.StatusCode(201)`. [AuthEndpoints]
+- **Body binding:** a complex-type parameter (a record) is read from the JSON body; registered services in the same parameter list come from DI. [AuthEndpoints]
 - **Developer Exception Page:** stack traces only in Development; a security concern if it ever ran in Production. [health check 500]
 - **Structured logging:** message templates with `{Name}` placeholders store values as separate fields. [MigrationRunner]
 
@@ -72,6 +87,10 @@ One line per topic, for revision. Where each one first came up is in brackets.
 - **A new test-class instance per test:** the constructor and field initializers are the setup (no `[SetUp]`); `IDisposable.Dispose` is the teardown. [PasswordHasherTests]
 - **`Assert.Throws<T>(() => …)`:** passes a lambda so xUnit can call the code and catch the exception itself. [PasswordHasherTests]
 - **Unicode escapes:** `"é"` is one precomposed character; `"é"` is `e` plus a combining accent; `"\U0001F512"` (capital U, 8 digits) is a code point outside the BMP, such as an emoji. [PasswordHasherTests, PasswordPolicyTests]
+
+- **`IAsyncLifetime`:** async setup/teardown (`InitializeAsync`/`DisposeAsync`) for fixtures and test classes; a constructor can't be `async`. [DatabaseFixture]
+- **Collection fixtures:** `[CollectionDefinition]` + `ICollectionFixture<T>` share one fixture instance across many test classes; tests in one collection never run in parallel. [DatabaseCollection]
+- **`WebApplicationFactory<Program>`:** starts the real API in memory (no network port) and hands out an `HttpClient`; `ConfigureWebHost` changes environment and settings for tests. [ObscuraApiFactory]
 
 ## Tooling
 

@@ -17,7 +17,13 @@ public sealed class PasswordHasher
     public PasswordHasher(Argon2Parameters current)
     {
         _current = current;
+
+        // Hash of a random password nobody knows, with the current parameters
+        // Login verifies unknown emails against it, so both cases cost one Argon2id run
+        DummyHash = Hash(Convert.ToBase64String(RandomNumberGenerator.GetBytes(32)));
     }
+
+    public string DummyHash { get; }
 
     // Returns a PHC string for a new password (registration, password change, rehash)
     public string Hash(string password)

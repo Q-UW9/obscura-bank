@@ -20,7 +20,21 @@ public static class PasswordPolicy
         if (password.Length > MaxRawLength)
             return false;
 
-        var codePoints = password.Normalize(NormalizationForm.FormKC).EnumerateRunes().Count();
+        var codePoints = CountCodePoints(password);
         return codePoints is >= MinLength and <= MaxLength;
     }
+
+    // Login only rejects input that can never be a stored password:
+    // empty or over the maximum
+    // No minimum here, so raising MinLength later cannot lock out existing users
+    public static bool IsAcceptableForLogin(string password)
+    {
+        if (password.Length == 0 || password.Length > MaxRawLength)
+            return false;
+
+        return CountCodePoints(password) <= MaxLength;
+    }
+
+    private static int CountCodePoints(string password) =>
+        password.Normalize(NormalizationForm.FormKC).EnumerateRunes().Count();
 }

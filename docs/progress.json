@@ -19,6 +19,14 @@
     {
       "text": "PasswordHasher (Argon2id, PHC, NFKC, rehash check) and PasswordPolicy (15–128 code points), 25 unit tests green",
       "date": "2026-11-19"
+    },
+    {
+      "text": "DB test infrastructure: WebApplicationFactory (Testing env), shared collection fixture (reset + migrate once), truncate per test; guard test proves obscura_test",
+      "date": "2026-11-20"
+    },
+    {
+      "text": "E1 complete: register (201/400/409) and login (204 / one generic 401, dummy hash, rehash), 53 tests green incl. attack tests",
+      "date": "2026-11-20"
     }
   ],
   "features": [
@@ -29,11 +37,12 @@
       "steps": {
         "concept": "done",
         "note": "done",
-        "code": "doing",
-        "test": "doing"
+        "code": "done",
+        "test": "done"
       },
       "by": {
-        "test": "claude"
+        "test": "claude",
+        "code": "claude"
       }
     },
     {

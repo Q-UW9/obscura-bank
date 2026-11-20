@@ -1,5 +1,6 @@
 using Dapper;
 using Npgsql;
+using Obscura.Api.Auth;
 using Obscura.Api.Data;
 using Obscura.Api.Security;
 
@@ -20,9 +21,16 @@ builder.Services.AddSingleton(NpgsqlDataSource.Create(connectionString));
 builder.Services.AddSingleton(Argon2Parameters.Default);
 builder.Services.AddSingleton<PasswordHasher>();
 
+// All SQL for users, stateless
+// It opens a pooled connection per call, so a singleton is safe
+builder.Services.AddSingleton<UserRepository>();
+
 // Phase II
 // Building the app, then middleware and routes
 var app = builder.Build();
+
+// Build the hasher (and its dummy hash) now, not during the first login request
+_ = app.Services.GetRequiredService<PasswordHasher>();
 
 // Applying migrations at startup, in Development only
 // Production migrates as a deliberate deploy step instead
@@ -44,6 +52,9 @@ app.MapGet("/api/health/db", async (NpgsqlDataSource db) =>
     var name = await conn.ExecuteScalarAsync<string>("SELECT current_database()");
     return Results.Ok(new { status = "ok", database = name });
 });
+
+// POST /api/auth/register
+app.MapAuthEndpoints();
 
 // Start the server; blocks until shutdown
 app.Run();
