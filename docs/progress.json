@@ -2,7 +2,7 @@
   "version": 1,
   "projectStart": "2026-11-16",
   "phase": "C# trial week",
-  "focus": "E1",
+  "focus": "E2",
   "milestones": [
     {
       "text": "Project proposal (MANIFESTO, README)",
@@ -50,10 +50,15 @@
       "tier": 1,
       "name": "Secure sessions",
       "steps": {
-        "concept": "todo",
-        "note": "todo",
-        "code": "todo",
+        "concept": "doing",
+        "note": "doing",
+        "code": "doing",
         "test": "todo"
+      },
+      "by": {
+        "concept": "claude",
+        "code": "claude",
+        "note": "claude"
       }
     },
     {
@@ -376,6 +381,35 @@
       "date": "2026-11-19",
       "by": "claude",
       "feature": "E1"
+    },
+    {
+      "text": "Hand-written AuthenticationHandler with server-side sessions in PostgreSQL; cookie holds a 256-bit token, DB stores only SHA-256(token)",
+      "date": "2026-11-21",
+      "by": "claude",
+      "feature": "E2"
+    },
+    {
+      "text": "Cookie __Host-session (Secure, HttpOnly, SameSite=Strict, Path=/), always Secure incl. dev and tests; idle 15 min / absolute 8 h; login rotates, logout deletes the row",
+      "date": "2026-11-21",
+      "by": "claude",
+      "feature": "E2"
+    },
+    {
+      "text": "Order: E2 before E3 (E3 identifies the account owner from the session)",
+      "date": "2026-11-21",
+      "by": "claude"
+    },
+    {
+      "text": "__Host-session (Secure, HttpOnly, SameSite=Strict) accepted and sent back on http://localhost via the Vite proxy in Brave (Chromium) and Firefox",
+      "date": "2026-11-21",
+      "by": "claude",
+      "feature": "E2"
+    },
+    {
+      "text": "Not needed for E2: Secure cookies work on http://localhost (browsers treat it as a secure context); tests use https://localhost. Revisit for HSTS in E7.",
+      "date": "2026-11-21",
+      "by": "claude",
+      "feature": "E2"
     }
   ],
   "open": [
@@ -399,7 +433,8 @@
       "text": "Trust the HTTPS dev certificate (Secure cookie, HSTS)",
       "feature": "E2",
       "date": "2026-11-18",
-      "by": "claude"
+      "by": "claude",
+      "closed": "2026-11-21"
     },
     {
       "text": "Test isolation between DB tests: transaction per test vs. truncate (decide with the first DB test)",
@@ -420,6 +455,13 @@
       "by": "claude",
       "feature": "E1",
       "closed": "2026-11-19"
+    },
+    {
+      "text": "Browser check: is __Host-session (Secure) accepted and sent back on http://localhost via the Vite proxy in Chrome and Firefox?",
+      "date": "2026-11-21",
+      "by": "claude",
+      "feature": "E2",
+      "closed": "2026-11-21"
     }
   ]
 }

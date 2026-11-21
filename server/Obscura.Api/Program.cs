@@ -3,6 +3,7 @@ using Npgsql;
 using Obscura.Api.Auth;
 using Obscura.Api.Data;
 using Obscura.Api.Security;
+using Obscura.Api.Sessions;
 
 // Phase I
 // Registering services before Build
@@ -24,6 +25,21 @@ builder.Services.AddSingleton<PasswordHasher>();
 // All SQL for users, stateless
 // It opens a pooled connection per call, so a singleton is safe
 builder.Services.AddSingleton<UserRepository>();
+
+// The app's clock. Tests replace it with a FakeTimeProvider to move time forward.
+builder.Services.AddSingleton(TimeProvider.System);
+
+// Session timeouts from appsettings.json, checked at startup
+// (fail fast on a missing or wrong section)
+builder.Services.AddOptions<SessionTimeoutOptions>()
+    .Bind(builder.Configuration.GetSection(SessionTimeoutOptions.SectionName))
+    .Validate(o => o.IdleTimeout > TimeSpan.Zero && o.AbsoluteTimeout > o.IdleTimeout,
+        "Sessions: IdleTimeout must be positive and shorter than AbsoluteTimeout.")
+    .ValidateOnStart();
+
+// All SQL for sessions. Stateless (pooled connection per call)
+// A singleton like the others
+builder.Services.AddSingleton<SessionStore>();
 
 // Phase II
 // Building the app, then middleware and routes
@@ -55,6 +71,33 @@ app.MapGet("/api/health/db", async (NpgsqlDataSource db) =>
 
 // POST /api/auth/register
 app.MapAuthEndpoints();
+
+// ARCHIVED
+// Two dev-only endpoints that verified, before any session code existed, that
+// browsers accept the session cookie as decided: "__Host-session" with 
+// Secure, HttpOnly, SameSite=Strict, Path=/ and no Expires, over plain
+// http://localhost through the Vite proxy.
+// Result = accepted and sent back in Brave (Chromium) and Firefox, hidden from
+// document.cookie.
+// Kept as a record of that check, though the following code is safe to delete.
+// The real cookie is set by the login endpoint.
+// if (app.Environment.IsDevelopment())
+// {
+//     app.MapGet("/api/dev/cookie-check/set", (HttpContext http) =>
+//     {
+//         http.Response.Cookies.Append("__Host-session", "browser-check", new CookieOptions
+//         {
+//             Secure = true,
+//             HttpOnly = true,
+//             SameSite = SameSiteMode.Strict,
+//             Path = "/",
+//         });
+//         return Results.Text("Cookie set. Now open /api/dev/cookie-check/echo");
+//     });
+
+//     app.MapGet("/api/dev/cookie-check/echo", (HttpContext http) =>
+//         Results.Ok(new { received = http.Request.Cookies.ContainsKey("__Host-session") }));
+// }
 
 // Start the server; blocks until shutdown
 app.Run();
