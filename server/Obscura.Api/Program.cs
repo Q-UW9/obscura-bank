@@ -1,4 +1,5 @@
 using Dapper;
+using Microsoft.AspNetCore.Authentication;
 using Npgsql;
 using Obscura.Api.Auth;
 using Obscura.Api.Data;
@@ -41,6 +42,12 @@ builder.Services.AddOptions<SessionTimeoutOptions>()
 // A singleton like the others
 builder.Services.AddSingleton<SessionStore>();
 
+// My own authentication scheme as the default, plus authorization for RequireAuthorization()
+builder.Services.AddAuthentication(SessionAuthenticationHandler.SchemeName)
+    .AddScheme<AuthenticationSchemeOptions, SessionAuthenticationHandler>(
+        SessionAuthenticationHandler.SchemeName, configureOptions: null);
+builder.Services.AddAuthorization();
+
 // Phase II
 // Building the app, then middleware and routes
 var app = builder.Build();
@@ -58,6 +65,11 @@ if (app.Environment.IsDevelopment())
         migrationsDir,
         app.Logger);
 }
+
+// Authentication (who is this)
+// Authorization  (what may they)
+app.UseAuthentication();
+app.UseAuthorization();
 
 // GET /api/health/db: proves API to PostgreSQL works
 // Returns only "ok" and the db name

@@ -3,6 +3,10 @@ using Npgsql;
 
 namespace Obscura.Api.Data;
 
+// This is what is shown by GET /api/me
+// Never the password hash!
+public sealed record UserProfile(string Email, string Role);
+
 // What a login needs from a user row. More columns join when a feature needs them
 public sealed record UserCredentials(long Id, string Email, string PasswordHash);
 
@@ -48,6 +52,15 @@ public sealed class UserRepository
             WHERE email = @email
             """,
             new { email });
+    }
+
+    // The profile of a logged-in user or null if the user no longer exists
+    public async Task<UserProfile?> FindProfileAsync(long id)
+    {
+        await using var conn = await _db.OpenConnectionAsync();
+        return await conn.QuerySingleOrDefaultAsync<UserProfile>(
+            "SELECT email, role FROM users WHERE id = @id",
+            new { id });
     }
 
     // Used after a successful login when the stored hash has oudated parameters

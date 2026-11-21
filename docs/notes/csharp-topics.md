@@ -62,6 +62,8 @@ One line per topic, for revision. Where each one first came up is in brackets.
 - **`Base64Url` and `SHA256.HashData`:** URL/cookie-safe Base64 without padding (`System.Buffers.Text`, .NET 9+); one-shot static hashing without creating a hasher object. [SessionToken]
 - **`DateTime` kinds and UTC:** `DateTime` has a `Kind` (Utc, Local, Unspecified); Npgsql only accepts `Kind=Utc` for `timestamptz` and reads it back as UTC. `DateTimeOffset.UtcDateTime` gives a UTC `DateTime`. [SessionStore]
 - **`TimeSpan`:** a duration; arithmetic with `DateTime` (`now + timeout`, `now - lastSeen`); written as `"hh:mm:ss"` in config. [SessionOptions]
+- **Property pattern `is { } x`:** matches any non-null value and binds it to `x` in one step: `if (Compute() is { } result) …`. [AuthEndpoints]
+- **Optional parameters:** `void F(string? token = null)` can be called as `F()`; often combined with named arguments (`F(token: x)`). Java needs overloads for this. [SessionHttpTests]
 - **CPU-bound vs I/O-bound:** `async` helps while *waiting* (DB, network), not while *computing*, so Argon2id is called synchronously. [PasswordHasher]
 
 ## ASP.NET Core
@@ -87,6 +89,7 @@ One line per topic, for revision. Where each one first came up is in brackets.
 - **Authentication pipeline:** `AddAuthentication(defaultScheme).AddScheme<TOptions, THandler>(name, …)`; the handler's `HandleAuthenticateAsync` returns `NoResult` (anonymous), `Fail` or `Success(ticket)`. `UseAuthentication()` then `UseAuthorization()`; `RequireAuthorization()` on an endpoint gives 401 (not authenticated) or 403 (not allowed). Handlers are created per request (transient). [SessionAuthenticationHandler]
 - **Claims:** a `ClaimsPrincipal` holds `ClaimsIdentity`s, which hold `Claim`s (type + value, e.g. `NameIdentifier`, `Role`); handlers can take `ClaimsPrincipal` as a parameter (it's `HttpContext.User`). [SessionAuthenticationHandler, /api/me]
 - **Calling the base constructor:** `public Derived(…) : base(…)` passes arguments to the base class constructor, like Java's `super(…)` as the first statement. [SessionAuthenticationHandler]
+- **`Response.Cookies.Append` / `Delete` with `CookieOptions`:** set and expire cookies; a deletion must repeat the same `Path`/`Secure` (and for `__Host-` cookies must be `Secure`), or the browser ignores it. [SessionCookie]
 - **Developer Exception Page:** stack traces only in Development; a security concern if it ever ran in Production. [health check 500]
 - **Structured logging:** message templates with `{Name}` placeholders store values as separate fields. [MigrationRunner]
 
@@ -102,6 +105,11 @@ One line per topic, for revision. Where each one first came up is in brackets.
 - **`WebApplicationFactory<Program>`:** starts the real API in memory (no network port) and hands out an `HttpClient`; `ConfigureWebHost` changes environment and settings for tests. [ObscuraApiFactory]
 
 - **`FakeTimeProvider` and `Options.Create`:** a controllable clock for tests (`Advance(TimeSpan)`), and options built in code without configuration, so a class can be tested on its own. [SessionStoreTests]
+
+- **`ConfigureTestServices` + `RemoveAll<T>()`:** swaps a registration (here `TimeProvider` → `FakeTimeProvider`) only in the test host. [ObscuraApiFactory]
+- **`WebApplicationFactoryClientOptions`:** `BaseAddress` (`https://localhost` so `Secure` cookies are sent) and `HandleCookies` (a browser-like cookie jar, or cookies sent by hand). [ObscuraApiFactory]
+- **`SetCookieHeaderValue.Parse`:** reads a `Set-Cookie` header into typed properties (`Secure`, `HttpOnly`, `SameSite`, `Expires`, …). [SessionHttpTests]
+- **`Assert.Single(collection)`:** asserts exactly one element and returns it. [SessionHttpTests]
 
 ## Tooling
 

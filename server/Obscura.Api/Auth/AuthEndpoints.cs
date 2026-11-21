@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using Obscura.Api.Data;
 using Obscura.Api.Security;
+using Obscura.Api.Sessions;
 
 namespace Obscura.Api.Auth;
 
@@ -12,6 +14,12 @@ public static class AuthEndpoints
         var group = app.MapGroup("/api/auth");
         group.MapPost("/register", RegisterAsync);
         group.MapPost("/login", LoginAsync);
+        group.MapPost("/logout", LogoutAsync);
+
+        // The current user
+        // Anonymous requests get 401 from the authorization middleware
+        app.MapGet("/api/me", GetMeAsync).RequireAuthorization();
+
         return group;
     }
 
@@ -43,8 +51,10 @@ public static class AuthEndpoints
 
     // 204 on success (E2 will create the session here)
     // 401 on every failure
+    // + SessionStore and HttpContext -> read the incoming cookie and set the new one
     private static async Task<IResult> LoginAsync(
-        LoginRequest request, PasswordHasher hasher, UserRepository users)
+        LoginRequest request, PasswordHasher hasher, UserRepository users,
+        SessionStore sessions, HttpContext http)
     {
         var failure = Results.Problem(
             statusCode: StatusCodes.Status401Unauthorized,
@@ -68,6 +78,35 @@ public static class AuthEndpoints
         if (hasher.NeedsRehash(user.PasswordHash))
             await users.UpdatePasswordHashAsync(user.Id, hasher.Hash(request.Password!));
 
+        // Fixation
+        // A session that existed before this login (planted or left over) is ended,
+        // never reused
+        if (SessionToken.TryHash(http.Request.Cookies[SessionAuthenticationHandler.CookieName]) is { } oldHash)
+            await sessions.DeleteAsync(oldHash);
+
+        // A brand-new session
+        // The cookie carries the token, the database only its hash
+        var token = await sessions.CreateAsync(user.Id);
+        SessionCookie.Set(http.Response, token);
+
+        return Results.NoContent();
+    }
+
+    private static async Task<IResult> GetMeAsync(ClaimsPrincipal user, UserRepository users)
+    {
+        var profile = await users.FindProfileAsync(user.GetUserId());
+        return profile is null ? Results.Unauthorized() : Results.Ok(profile);
+    }
+
+    // Ends the session on the server first, then removes the cookie.
+    // Always 204, even without a session, so a logout after the session has already
+    // expired still clears the browser's cookie.
+    private static async Task<IResult> LogoutAsync(HttpContext http, SessionStore sessions)
+    {
+        if (SessionToken.TryHash(http.Request.Cookies[SessionAuthenticationHandler.CookieName]) is { } tokenHash)
+            await sessions.DeleteAsync(tokenHash);
+
+        SessionCookie.Expire(http.Response);
         return Results.NoContent();
     }
 }
