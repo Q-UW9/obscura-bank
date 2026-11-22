@@ -1,28 +1,26 @@
-import { useEffect, useState } from 'react'
+import { Navigate, Route, Routes } from 'react-router'
+import { RequireAuth } from './auth/RequireAuth'
+import { Layout } from './components/Layout'
+import { HomePage } from './pages/HomePage'
+import { LoginPage } from './pages/LoginPage'
+import { RegisterPage } from './pages/RegisterPage'
 
-type Health = { status: string; database: string }
-
+// All client routes - the server only knows /api/*
+// Layout wraps every page (pathless route = no URL part of its own)
+// Routes inside RequireAuth need a session (UI only, the API checks for itself)
+// Unknown paths -> "/" -> the guard decides
 function App() {
-  const [health, setHealth] = useState<Health | null>(null)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    fetch('/api/health/db')
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        return res.json() as Promise<Health>
-      })
-      .then(setHealth)
-      .catch((err: Error) => setError(err.message))
-  }, [])
-
   return (
-    <main>
-      <h1>Obscura Bank</h1>
-      {error && <p>API error: {error}</p>}
-      {!error && !health && <p>Checking API...</p>}
-      {health && <p>Database: {health.status} ({health.database})</p>}
-    </main>
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route element={<RequireAuth />}>
+          <Route path="/" element={<HomePage />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
+    </Routes>
   )
 }
 

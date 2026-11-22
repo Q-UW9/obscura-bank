@@ -1,111 +1,445 @@
+/* Obscura look - ported from "Obscura Bank Proposal.html"
+   Mid-2000s portal: dark steel shell, light beveled panels, orange accent
+   One theme only (dark shell), no light/dark switch
+   AI-written, see AI-USAGE.md */
+
+/* Tokens */
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --page: #1d2329;
+  --shell: #2c343c;
+  --shell-hi: #3b454f;
+  --shell-edge: #4b5661;
+  --bar: #161b20;
+  --panel: #e4e8ec;
+  --panel-hi: #f5f7f9;
+  --panel-edge: #8b96a1;
+  --ink: #1c242c;
+  --ink-soft: #4c5864;
+  --on-dark: #e8edf2;
+  --on-dark-soft: #9eabb8;
+  --accent: #e8822e;
+  --accent-hi: #ffb067;
+  --accent-ink: #a6500f;
+  --ok: #3f8f5a;
+  --ok-hi: #7ccf94;
+  --blue: #3e6fa8;
+  --blue-hi: #86b4e6;
+  --violet: #7a55a8;
+  --violet-hi: #b79be0;
+  --danger: #b4321f;
+  --danger-edge: #c9806f;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  --f-ui: Verdana, Tahoma, "DejaVu Sans", Geneva, sans-serif;
+  --f-head: "Trebuchet MS", Tahoma, "DejaVu Sans", sans-serif;
+  --f-mono: "Lucida Console", "Courier New", "DejaVu Sans Mono", monospace;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  color-scheme: dark;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+/* Base */
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+/* Reserve the scrollbar space, so the centered shell never shifts sideways
+   between pages with and without a scrollbar */
+html {
+  scrollbar-gutter: stable;
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
+  min-height: 100svh;
+  padding: 18px 16px 40px;
+  background: var(--page) linear-gradient(180deg, #2a323a 0, var(--page) 420px) no-repeat;
+  color: var(--ink);
+  font-family: var(--f-ui);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+a {
+  color: var(--accent-ink);
+  font-weight: bold;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+:focus-visible {
+  outline: 2px dotted var(--accent);
+  outline-offset: 2px;
 }
 
 h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--f-head);
+  line-height: 1.2;
+  text-wrap: balance;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
 p {
   margin: 0;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+.mono {
+  font-family: var(--f-mono);
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+/* Page frame: toptag -> banner -> nav -> body -> footer
+   At least one screen tall (minus the body padding 18 + 40),
+   so short pages share one frame and the footer stays at the bottom */
+.shell {
+  max-width: 940px;
+  min-height: calc(100svh - 58px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.toptag {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px 12px;
+  padding-bottom: 6px;
+  color: var(--on-dark-soft);
+  font-size: 10.5px;
+}
+.toptag .tag {
+  font-family: var(--f-head);
+  font-weight: bold;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--on-dark);
+  border: 2px solid var(--on-dark);
+  padding: 0 5px;
+}
+
+/* Banner: logo left, session right */
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 28px;
+  padding: 18px 22px;
+  background: linear-gradient(180deg, var(--shell-hi), var(--shell));
+  border: 1px solid var(--shell-edge);
+  border-radius: 10px 10px 0 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: inherit;
+}
+.logo:hover {
+  text-decoration: none;
+}
+.ring {
+  width: 46px;
+  height: 46px;
+  flex: none;
+  position: relative;
+  border-radius: 50%;
+  border: 5px solid var(--on-dark);
+  background: radial-gradient(circle at 35% 35%, #4a5560, #232a31);
+}
+.ring::after {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border-radius: 50%;
+  border: 3px solid var(--accent);
+}
+.logo b {
+  display: block;
+  font-family: var(--f-head);
+  font-size: 26px;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  color: var(--on-dark);
+}
+.logo small {
+  display: block;
+  margin-top: 3px;
+  font-size: 10px;
+  font-weight: normal;
+  letter-spacing: 0.25em;
+  color: var(--on-dark-soft);
+}
+
+.session {
+  margin-left: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px 12px;
+  color: var(--on-dark-soft);
+  font-size: 11px;
+  min-width: 0;
+}
+.session strong {
+  color: var(--on-dark);
+  overflow-wrap: anywhere;
+}
+
+/* Nav strip under the banner */
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 26px;
+  padding: 9px 12px;
+  background: linear-gradient(180deg, #232a31, var(--bar));
+  border: 1px solid #0d1013;
+  border-top: 0;
+}
+.nav a {
+  color: var(--on-dark);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.nav a:hover,
+.nav a[aria-current="page"] {
+  color: var(--accent-hi);
+  text-decoration: none;
+}
+
+/* Body area: dark shell around the panels
+   flex: 1 = takes the spare height, not the content's height */
+.body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px;
+  background: var(--shell);
+  border: 1px solid var(--shell-edge);
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+  min-width: 0;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 4px 0;
+  color: var(--on-dark-soft);
+  font-size: 10px;
+  text-align: center;
+}
+
+/* Glossy buttons - for <button> and <a> */
+.btn {
+  display: inline-block;
+  padding: 6px 14px;
+  font-family: var(--f-ui);
+  font-size: 10.5px;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.4;
+  color: #2a1503;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+  border: 1px solid #7a3d0b;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #ffd3a3 0%, #f4a258 48%, #e07a22 52%, #c9661a 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 1px 2px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+.btn:hover:not(:disabled) {
+  text-decoration: none;
+  filter: brightness(1.08);
+}
+.btn:active:not(:disabled) {
+  filter: brightness(0.95);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+.btn:disabled {
+  cursor: not-allowed;
+  filter: grayscale(0.6) brightness(0.9);
+}
+.btn.dark {
+  color: var(--on-dark);
+  text-shadow: 0 -1px 0 #000;
+  border-color: #0c0f12;
+  background: linear-gradient(180deg, #5a6672 0%, #3a434c 50%, #2a3138 51%, #222830 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Panels: light card with a glossy title bar
+   <section class="panel"> <div class="ph"><h1 or h2>..</h1></div> <div class="pb">..</div> */
+.panel {
+  min-width: 0;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--panel-hi), var(--panel) 120px);
+  border: 1px solid var(--panel-edge);
+  border-radius: 8px;
+}
+.ph {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 12px;
+  padding: 6px 12px;
+  background: linear-gradient(180deg, #ffffff, #d3d9df);
+  border-bottom: 1px solid #aab3bc;
+}
+.ph h1,
+.ph h2 {
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.ph h1 span,
+.ph h2 span {
+  color: var(--accent-ink);
+}
+.pb {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px 16px;
+}
+.pb p {
+  max-width: 70ch;
+}
+
+/* Narrow centered panel for login / register */
+.auth {
+  width: 100%;
+  max-width: 420px;
+  margin: 18px auto;
+}
+
+/* Forms */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.label {
+  font-size: 9.5px;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.field input {
+  width: 100%;
+  padding: 6px 8px;
+  font-family: var(--f-ui);
+  font-size: 13px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--panel-edge);
+  border-radius: 3px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+.field input:focus {
+  border-color: var(--accent);
+}
+.field input[aria-invalid="true"] {
+  border-color: var(--danger);
+  background: #fff6f4;
+}
+.hint {
+  font-size: 10.5px;
+  color: var(--ink-soft);
+}
+.field-error {
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--danger);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+/* Notice strips: .strip = info, .strip.error = form-level error */
+.strip {
+  padding: 9px 12px;
+  font-size: 11.5px;
+  background: linear-gradient(180deg, #fff3e3, #f7ddbd);
+  border: 1px solid #b9824c;
+  border-radius: 6px;
+}
+.strip strong {
+  margin-right: 4px;
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+}
+.strip.error {
+  background: linear-gradient(180deg, #fff1ee, #f6d6cf);
+  border-color: var(--danger-edge);
+}
+.strip.error strong {
+  color: var(--danger);
+}
+
+/* "» more" link marker */
+.more::before {
+  content: "» ";
+  color: var(--accent);
+}
+
+/* Key/value list: <dl class="facts"><div><dt>..</dt><dd>..</dd></div></dl> */
+.facts {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.facts dt {
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.facts dd {
+  margin: 0;
+  font-weight: bold;
+  overflow-wrap: anywhere;
+}
+
+/* Status text on the dark shell (loading screens) */
+.status {
+  padding: 24px 0;
+  color: var(--on-dark-soft);
+  text-align: center;
+}
+
+/* Small screens: logo and session stack */
+@media (max-width: 620px) {
+  .banner {
+    padding: 14px 16px;
+  }
+  .session {
+    margin-left: 0;
+    justify-content: flex-start;
+  }
 }

@@ -27,6 +27,10 @@
     {
       "text": "E1 complete: register (201/400/409) and login (204 / one generic 401, dummy hash, rehash), 53 tests green incl. attack tests",
       "date": "2026-11-20"
+    },
+    {
+      "text": "E2 backend: server-side sessions (hashed tokens, idle/absolute expiry, rotation, logout), session handler, /api/me; 83 tests green incl. HTTP attack tests",
+      "date": "2026-11-22"
     }
   ],
   "features": [
@@ -50,15 +54,16 @@
       "tier": 1,
       "name": "Secure sessions",
       "steps": {
-        "concept": "doing",
+        "concept": "done",
         "note": "doing",
-        "code": "doing",
-        "test": "todo"
+        "code": "done",
+        "test": "done"
       },
       "by": {
         "concept": "claude",
         "code": "claude",
-        "note": "claude"
+        "note": "claude",
+        "test": "claude"
       }
     },
     {
@@ -410,6 +415,11 @@
       "date": "2026-11-21",
       "by": "claude",
       "feature": "E2"
+    },
+    {
+      "text": "Styling: plain CSS (no Tailwind), Obscura look ported from the proposal; CSS is AI-written and every AI-written file is logged in AI-USAGE.md",
+      "date": "2026-11-22",
+      "by": "claude"
     }
   ],
   "open": [
@@ -462,6 +472,12 @@
       "by": "claude",
       "feature": "E2",
       "closed": "2026-11-21"
+    },
+    {
+      "text": "Make an app icon / favicon (replace the Vite default) - planned for 23.11.2026 with E3",
+      "date": "2026-11-22",
+      "by": "claude",
+      "feature": "E3"
     }
   ]
 }
