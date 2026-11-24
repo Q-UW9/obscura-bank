@@ -3,7 +3,7 @@ using System.Text;
 namespace Obscura.Api.Security;
 
 // Password length rules (NIST SP 800-63B):
-// 15-128 Unicode points after NKFC normalization
+// 15-128 Unicode points after NFKC normalization
 // No composition rules (no required digits or symbols)
 // Spaces are valid chars
 public static class PasswordPolicy
@@ -12,7 +12,7 @@ public static class PasswordPolicy
     public const int MaxLength = 128;
 
     // Generous upper bound on the raw input, checked BEFORE normalizing
-    // Thus, a huge input is rejected without spending CU on NKFC first!
+    // Thus, a huge input is rejected without spending CPU on NFKC first!
     private const int MaxRawLength = 4 * MaxLength;
 
     public static bool HasValidLength(string password)

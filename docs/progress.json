@@ -2,7 +2,7 @@
   "version": 1,
   "projectStart": "2026-11-16",
   "phase": "C# trial week",
-  "focus": "E2",
+  "focus": "E3",
   "milestones": [
     {
       "text": "Project proposal (MANIFESTO, README)",
@@ -31,6 +31,14 @@
     {
       "text": "E2 backend: server-side sessions (hashed tokens, idle/absolute expiry, rotation, logout), session handler, /api/me; 83 tests green incl. HTTP attack tests",
       "date": "2026-11-22"
+    },
+    {
+      "text": "E3 migrations 0004 (accounts, treasury, backfill) and 0005 (ledger, deferred zero-sum trigger, append-only triggers) applied in dev",
+      "date": "2026-11-24"
+    },
+    {
+      "text": "E3 schema applied: 0004 accounts (treasury + backfill) and 0005 ledger (deferred sum-to-zero trigger, append-only triggers)",
+      "date": "2026-11-24"
     }
   ],
   "features": [
@@ -55,7 +63,7 @@
       "name": "Secure sessions",
       "steps": {
         "concept": "done",
-        "note": "doing",
+        "note": "done",
         "code": "done",
         "test": "done"
       },
@@ -71,10 +79,15 @@
       "tier": 1,
       "name": "Accounts and balances",
       "steps": {
-        "concept": "todo",
-        "note": "todo",
-        "code": "todo",
+        "concept": "done",
+        "note": "done",
+        "code": "doing",
         "test": "todo"
+      },
+      "by": {
+        "concept": "claude",
+        "note": "claude",
+        "code": "claude"
       }
     },
     {
@@ -420,6 +433,24 @@
       "text": "Styling: plain CSS (no Tailwind), Obscura look ported from the proposal; CSS is AI-written and every AI-written file is logged in AI-USAGE.md",
       "date": "2026-11-22",
       "by": "claude"
+    },
+    {
+      "text": "Money model: one account per user (same transaction as the user), one treasury system account (only one allowed negative, looked up by kind); funds enter as issue transfers; balances derived as SUM(amount)::bigint",
+      "date": "2026-11-24",
+      "by": "claude",
+      "feature": "E3"
+    },
+    {
+      "text": "Ledger integrity: groups sum to zero (app code + deferred constraint trigger at commit); append-only via BEFORE UPDATE/DELETE triggers; ON DELETE RESTRICT; ordering by id",
+      "date": "2026-11-24",
+      "by": "claude",
+      "feature": "E3"
+    },
+    {
+      "text": "JSON amounts are strings of integer piconero; client uses BigInt, 12 decimals for display only",
+      "date": "2026-11-24",
+      "by": "claude",
+      "feature": "E3"
     }
   ],
   "open": [

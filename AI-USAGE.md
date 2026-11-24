@@ -29,6 +29,7 @@ Newest first. "Rewritten" means the AI replaced the whole file.
 
 | Date | File | What |
 |---|---|---|
+| 24.11.2026 | `docs/handoff/2026-11-24-dev-script.md` | Handoff note to the Overview Chat: proposal for a dev quick-command script and how to integrate it |
 | 22.11.2026 | `client/src/index.css` | Edited: the shell fills the viewport (`min-height` on `.shell`, `flex: 1` on `.body`), so login and register share one frame height; `scrollbar-gutter: stable` on `html` |
 | 22.11.2026 | `docs/handoff/2026-11-22-claude-code-frontend.md` | Handoff note to the architecture chat: decisions from the E2 frontend session |
 | 22.11.2026 | `AI-USAGE.md` | This file |
